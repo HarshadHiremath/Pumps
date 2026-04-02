@@ -12,15 +12,16 @@ function Login({ setUser }) {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    // Prevent the default form submission (page reload)
     if (e) e.preventDefault();
-    
     setIsLoading(true);
+    
     try {
       const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Admin?key=${API_KEY}`;
       const res = await fetch(url);
       const result = await res.json();
       const rows = result.values;
+
+      if (!rows) throw new Error("No data found");
 
       const headers = rows[0];
       const users = rows.slice(1).map((row) => {
@@ -40,70 +41,73 @@ function Login({ setUser }) {
         setUser(user);
         navigate("/home");
       } else {
-        alert("Invalid Credentials ❌");
+        alert("Access Denied: Invalid Credentials ❌");
       }
     } catch (err) {
       console.error(err);
-      alert("Error connecting to Industrial Server");
+      alert("Terminal Error: Unable to reach Wilo Authorization Server");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0f172a] relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none" 
-           style={{ backgroundImage: `radial-gradient(#94a3b8 1px, transparent 1px)`, backgroundSize: '30px 30px' }}>
+    <div className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden font-sans">
+      {/* Engineering Grid Background */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+           style={{ backgroundImage: `linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)`, backgroundSize: '40px 40px' }}>
       </div>
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px]"></div>
+      
+      {/* Wilo Green Decorative Blobs */}
+      <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-green-600/5 rounded-full blur-[120px]"></div>
+      <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-green-600/10 rounded-full blur-[120px]"></div>
 
-      <div className="relative z-10 w-[90%] max-w-md">
-        {/* WE WRAP EVERYTHING IN A FORM TO ENABLE 'ENTER' KEY SUPPORT */}
+      <div className="relative z-10 w-[95%] max-w-md">
         <form 
           onSubmit={handleLogin} 
-          className="bg-zinc-900/80 backdrop-blur-xl border border-white/10 shadow-2xl rounded-3xl p-10 overflow-hidden"
+          className="bg-white border-2 border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-2xl p-8 md:p-12 overflow-hidden"
         >
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-cyan-500"></div>
+          {/* Top Industrial Border */}
+          <div className="absolute top-0 left-0 w-full h-2 bg-green-600"></div>
 
-          <div className="text-center mb-8">
-            <div className="inline-block p-1 bg-white rounded-xl mb-4 shadow-lg shadow-cyan-500/20">
-              <img src={Logo} alt="Wilo Logo" className="w-20 h-auto rounded-lg" />
+          <div className="text-center mb-10">
+            <div className="inline-block p-2 bg-white border border-slate-100 rounded-xl mb-4 shadow-sm">
+              <img src={Logo} alt="Wilo Logo" className="w-16 h-auto grayscale-0" />
             </div>
-            <h1 className="text-3xl font-extrabold text-white tracking-tight uppercase">
-              Aditya's <span className="text-cyan-400">Pumps</span>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
+              INVENTO <span className="text-green-600">Wilo</span>
             </h1>
-            <p className="text-[10px] mt-2 uppercase tracking-[0.2em] text-zinc-400 font-bold">
-              Industrial Monitoring v1.0
+            <p className="text-[10px] mt-2 uppercase tracking-[0.3em] text-slate-500 font-black">
+              Secure Asset Authorization
             </p>
           </div>
 
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase mb-2 ml-1">Username</label>
+              <label className="block text-[11px] font-black text-slate-800 uppercase mb-2 tracking-widest">Operator Username</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </span>
                 <input
                   required
                   type="text"
-                  placeholder="System ID / Username"
+                  placeholder="Enter System ID"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                  className="w-full pl-12 pr-4 py-4 rounded-lg bg-slate-50 border-2 border-slate-200 text-slate-900 font-semibold placeholder-slate-400 focus:outline-none focus:border-green-600 transition-all text-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase mb-2 ml-1">Secure Password</label>
+              <label className="block text-[11px] font-black text-slate-800 uppercase mb-2 tracking-widest">Access Pin / Password</label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
                 </span>
                 <input
@@ -112,32 +116,41 @@ function Login({ setUser }) {
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all"
+                  className="w-full pl-12 pr-4 py-4 rounded-lg bg-slate-50 border-2 border-slate-200 text-slate-900 font-semibold placeholder-slate-400 focus:outline-none focus:border-green-600 transition-all text-sm"
                 />
               </div>
             </div>
 
-            {/* Changed from onClick to type="submit" */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full relative group mt-4 overflow-hidden py-4 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-zinc-950 font-bold uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] active:scale-[0.98]"
+              className="w-full relative overflow-hidden py-4 rounded-lg bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest transition-all shadow-lg shadow-green-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <span className="relative z-10">{isLoading ? "Verifying..." : "Authorize Access"}</span>
-              <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+              <span className="relative z-10 text-sm">
+                {isLoading ? "Verifying Credentials..." : "Authorize Access"}
+              </span>
             </button>
           </div>
 
-          <div className="mt-1 pt-6 border-t border-white/5">
-            <p className="text-center text-[10px] text-zinc-500 leading-relaxed uppercase tracking-wider">
-              System Authorized For <br/>
-              <span className="text-zinc-300 font-bold">Wilo Industrial Division</span>
+          <div className="mt-8 pt-6 border-t border-slate-100">
+            <div className="flex items-center justify-center gap-2 mb-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">System Status: Online</p>
+            </div>
+            <p className="text-center text-[9px] text-slate-400 leading-relaxed uppercase tracking-widest">
+              Authorized Personnel Only <br/>
+              <span className="text-slate-900 font-black">Wilo Industrial Division</span>
             </p>
           </div>
         </form>
-        <p className="text-center mt-6 text-zinc-500 text-[14px] font-bold tracking-wide">
-          Developed by <span className="text-cyan-500/80">Aditya Kulkarni</span> • © 2026
-        </p>
+        
+        {/* Footer Credit */}
+        <div className="mt-8 flex flex-col items-center justify-center space-y-1">
+          <p className="text-slate-400 text-[11px] font-bold tracking-widest uppercase">
+            Developed by <span className="text-green-600">Aditya Kulkarni</span>
+          </p>
+          <p className="text-slate-900 text-[9px] font-medium">© 2026 Wilo Engineering India</p>
+        </div>
       </div>
     </div>
   );
