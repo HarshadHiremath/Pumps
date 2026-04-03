@@ -75,9 +75,9 @@ function Login({ setUser }) {
               <img src={Logo} alt="Wilo Logo" className="w-16 h-auto grayscale-0" />
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-              INVENTO <span className="text-green-600">Wilo</span>
+              Aditya <span className="text-green-600">Pump's</span>
             </h1>
-            <p className="text-[10px] mt-2 uppercase tracking-[0.3em] text-slate-500 font-black">
+            <p className="text-[10px] mt-2 uppercase tracking-[0.1em] text-slate-500 font-black">
               Secure Asset Authorization
             </p>
           </div>
@@ -137,19 +137,19 @@ function Login({ setUser }) {
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">System Status: Online</p>
             </div>
-            <p className="text-center text-[9px] text-slate-400 leading-relaxed uppercase tracking-widest">
+            <p className="text-center text-[9px] text-green-500 font-bold leading-relaxed uppercase tracking-widest">
               Authorized Personnel Only <br/>
-              <span className="text-slate-900 font-black">Wilo Industrial Division</span>
+              <span className="text-slate-900 font-black">Aditya Industrial Division</span>
             </p>
           </div>
         </form>
         
         {/* Footer Credit */}
         <div className="mt-8 flex flex-col items-center justify-center space-y-1">
-          <p className="text-slate-400 text-[11px] font-bold tracking-widest uppercase">
-            Developed by <span className="text-green-600">Aditya Kulkarni</span>
+          <p className="text-slate-400 text-[12px] font-bold text-center tracking-widest uppercase">
+          Engineered with ❤️ & passion by <span className="text-green-600">Aditya Kulkarni & Team</span>
           </p>
-          <p className="text-slate-900 text-[9px] font-medium">© 2026 Wilo Engineering India</p>
+          <p className="text-slate-900 text-[9px] font-medium">© 2026 HGI Pvt. Ltd. All Rights Reserved. </p>
         </div>
       </div>
     </div>

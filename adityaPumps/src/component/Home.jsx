@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Img from "../assets/img.png";
 
 function Home({ setUser }) {
     const navigate = useNavigate();
@@ -21,7 +22,8 @@ function Home({ setUser }) {
     const [selections, setSelections] = useState({});
     const [loading, setLoading] = useState(true);
 
-    const API_URL = "https://sheets.googleapis.com/v4/spreadsheets/1k_1BWpZz3ap10C8hdoMSGfEoVlYZ-12_QmAKURzcEWg/values/Data?key=AIzaSyDFA-SjdIRv0U7BClx-85-JhK2CKSYH2as";
+    const API_URL =
+        "https://sheets.googleapis.com/v4/spreadsheets/1k_1BWpZz3ap10C8hdoMSGfEoVlYZ-12_QmAKURzcEWg/values/Data?key=AIzaSyDFA-SjdIRv0U7BClx-85-JhK2CKSYH2as";
 
     useEffect(() => {
         fetch(API_URL)
@@ -64,7 +66,7 @@ function Home({ setUser }) {
             );
         });
         return [...new Set(availableRows.map((row) => row[columnName]))]
-            .filter(v => v && v !== "N/A")
+            .filter((v) => v && v !== "N/A")
             .sort();
     };
 
@@ -84,29 +86,30 @@ function Home({ setUser }) {
     };
 
     const handleLogout = () => {
-    localStorage.removeItem("user");
-    if (setUser) {
-        setUser(null);
-    }
-    localStorage.clear(); 
-    navigate("/", { replace: true }); 
-};
+        localStorage.removeItem("user");
+        if (setUser) {
+            setUser(null);
+        }
+        localStorage.clear();
+        navigate("/", { replace: true });
+    };
 
     return (
         <div className="min-h-screen bg-white text-slate-900 font-sans">
             {/* --- TOP NAVIGATION --- */}
             <nav className="sticky top-0 z-50 bg-white border-b-4 border-green-600 px-4 md:px-8 py-3 flex justify-between items-center shadow-md">
                 <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded bg-white p-1 border border-slate-200 shadow-sm">
+                    <div className="w-15 h-15 rounded bg-white border-green-600 border-1 shadow-sm">
                         <img
-                            src="https://www.jameshargreaves.com/wp-content/uploads/2023/07/Wilo-Logo-50-50-Content.png"
+                            src={Img}
                             alt="Wilo Logo"
                             className="w-full h-full object-contain"
                         />
                     </div>
                     <div>
                         <h1 className="text-xl font-black tracking-tighter text-slate-800 leading-none">
-                            INVENTO <span className="text-green-600">Wilo</span>
+                            Aditya{" "}
+                            <span className="text-green-600">Pump's</span>
                         </h1>
                         <p className="text-[10px] font-bold text-green-700 uppercase tracking-widest mt-1">
                             Asset Management Portal
@@ -115,11 +118,21 @@ function Home({ setUser }) {
                 </div>
                 <button
                     onClick={handleLogout}
-                    className="group flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-red-50 text-slate-700 hover:text-red-700 rounded-lg font-bold text-sm transition-all border border-slate-200"
+                    className="group flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-red-600 text-slate-700 hover:text-white rounded-lg font-bold text-sm border border-slate-200"
                 >
                     Logout
-                    <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7" />
+                    <svg
+                        className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2.5"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7"
+                        />
                     </svg>
                 </button>
             </nav>
@@ -129,7 +142,13 @@ function Home({ setUser }) {
                 <aside className="w-full lg:w-80 p-6 bg-slate-50 border-r border-slate-200 lg:h-[calc(100vh-76px)] lg:sticky lg:top-[76px] overflow-y-auto">
                     <div className="flex justify-between items-center mb-6 pb-2 border-b-2 border-slate-200">
                         <h2 className="font-black text-slate-800 flex items-center gap-2 text-sm uppercase tracking-wider">
-                            <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"/></svg>
+                            <svg
+                                className="w-4 h-4 text-green-600"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                            >
+                                <path d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" />
+                            </svg>
                             Filters
                         </h2>
                         {Object.keys(selections).length > 0 && (
@@ -150,12 +169,19 @@ function Home({ setUser }) {
                                 </label>
                                 <select
                                     value={selections[col] || ""}
-                                    onChange={(e) => handleDropdownChange(col, e.target.value)}
+                                    onChange={(e) =>
+                                        handleDropdownChange(
+                                            col,
+                                            e.target.value,
+                                        )
+                                    }
                                     className="w-full bg-white border-2 border-slate-300 text-slate-800 py-2 px-3 rounded-md text-sm font-semibold focus:border-green-600 focus:ring-0 outline-none transition-all cursor-pointer shadow-sm"
                                 >
                                     <option value="">-- All {col} --</option>
                                     {getOptionsForColumn(col).map((opt) => (
-                                        <option key={opt} value={opt}>{opt}</option>
+                                        <option key={opt} value={opt}>
+                                            {opt}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -168,7 +194,9 @@ function Home({ setUser }) {
                     {loading ? (
                         <div className="flex flex-col items-center justify-center h-96 text-green-600">
                             <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-green-600 mb-4"></div>
-                            <p className="font-black uppercase tracking-widest text-sm">Synchronizing Database...</p>
+                            <p className="font-black uppercase tracking-widest text-sm">
+                                Synchronizing Database...
+                            </p>
                         </div>
                     ) : (
                         <>
@@ -178,7 +206,11 @@ function Home({ setUser }) {
                                         Asset Catalog
                                     </h2>
                                     <p className="text-slate-600 font-bold mt-1">
-                                        Identified <span className="text-green-600 px-2 bg-green-50 rounded">{finalResults.length}</span> components matching parameters.
+                                        Identified{" "}
+                                        <span className="text-green-600 px-2 bg-green-50 rounded">
+                                            {finalResults.length}
+                                        </span>{" "}
+                                        components matching parameters.
                                     </p>
                                 </div>
                                 <div className="flex gap-3">
@@ -197,56 +229,127 @@ function Home({ setUser }) {
                                             key={i}
                                             className="bg-white rounded-lg border-2 border-slate-200 shadow-sm hover:shadow-xl hover:border-green-500 transition-all duration-300 overflow-hidden flex flex-col"
                                         >
-                                            {/* Drawing Header */}
-                                            <div className="p-4 bg-slate-900 text-white flex justify-between items-center">
-                                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Drawing ID</span>
-                                                <span className="text-sm font-mono font-bold text-green-400">{item["Drawing No."]}</span>
+                                            {/* 1. PRIMARY HEADER (Drawing & Category) */}
+                                            <div className="p-4 bg-slate-900 text-white">
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">
+                                                        Drawing Ref
+                                                    </span>
+                                                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-green-500">
+                                                        {
+                                                            item[
+                                                                "Component Category"
+                                                            ]
+                                                        }
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between items-end">
+                                                    <span className="text-sm font-mono font-bold text-green-400 leading-none">
+                                                        {item["Drawing No."]}
+                                                    </span>
+                                                    <span className="text-[10px] font-black text-slate-300">
+                                                        REV: {item["Revision"]}
+                                                    </span>
+                                                </div>
                                             </div>
 
-                                            {/* Status Bar */}
+                                            {/* 2. STATUS BAR (Stock & Qty) */}
                                             <div className="px-4 py-2 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                                                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded border ${getStockColor(item["Stock status"])}`}>
+                                                <span
+                                                    className={`text-[10px] font-black uppercase px-2 py-0.5 rounded border ${getStockColor(item["Stock status"])}`}
+                                                >
                                                     {item["Stock status"]}
                                                 </span>
-                                                <span className="text-[10px] font-black text-slate-500 uppercase">Rev: {item["Revision"]}</span>
+                                                <div className="text-right">
+                                                    <span className="text-[9px] font-black text-slate-500 uppercase block leading-none">
+                                                        Inventory Qty
+                                                    </span>
+                                                    <span className="text-xs font-black text-slate-900">
+                                                        {item["QTY"]} Units
+                                                    </span>
+                                                </div>
                                             </div>
 
-                                            {/* Primary Info */}
+                                            {/* 3. PRIMARY INFO & SPECS */}
                                             <div className="p-5 flex-1">
                                                 <h3 className="text-lg font-black text-slate-900 leading-tight mb-1 uppercase tracking-tight">
                                                     {item["Standard Name"]}
                                                 </h3>
                                                 <p className="text-xs font-bold text-green-700 mb-4 pb-2 border-b border-slate-100 italic">
-                                                    {item["Sub type of standard component"]}
+                                                    {
+                                                        item[
+                                                            "Sub type of standard component"
+                                                        ]
+                                                    }
                                                 </p>
 
                                                 {/* Specs List */}
                                                 <div className="space-y-1 mt-4">
                                                     <div className="flex justify-between p-2 rounded bg-slate-50">
-                                                        <span className="text-[10px] font-black text-slate-500 uppercase">MOC Selection</span>
-                                                        <span className="text-xs font-bold text-slate-800">{item["MOC Selection"]}</span>
+                                                        <span className="text-[10px] font-black text-slate-500 uppercase">
+                                                            MOC Selection
+                                                        </span>
+                                                        <span className="text-xs font-bold text-slate-800">
+                                                            {
+                                                                item[
+                                                                    "MOC Selection"
+                                                                ]
+                                                            }
+                                                        </span>
                                                     </div>
+
                                                     <div className="flex justify-between p-2 rounded">
-                                                        <span className="text-[10px] font-black text-slate-500 uppercase">Net Weight</span>
-                                                        <span className="text-xs font-bold text-slate-800">{item["Weight"]} kg</span>
+                                                        <span className="text-[10px] font-black text-slate-500 uppercase">
+                                                            Interchangeability
+                                                        </span>
+                                                        <span className="text-xs font-bold text-green-700">
+                                                            {
+                                                                item[
+                                                                    "Interchangeablity MOC"
+                                                                ]
+                                                            }
+                                                        </span>
                                                     </div>
-                                                    <div className="flex flex-col p-2 rounded bg-slate-50">
-                                                        <span className="text-[10px] font-black text-slate-500 uppercase mb-1">Dimensions</span>
-                                                        <span className="text-[11px] font-bold text-slate-800 leading-snug">{item["Dimensions"]}</span>
+
+                                                    <div className="flex justify-between p-2 rounded bg-slate-50">
+                                                        <span className="text-[10px] font-black text-slate-500 uppercase">
+                                                            Net Weight
+                                                        </span>
+                                                        <span className="text-xs font-bold text-slate-800">
+                                                            {item["Weight"]} kg
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex flex-col p-2 rounded bg-slate-50 mt-1">
+                                                        <span className="text-[10px] font-black text-slate-500 uppercase mb-1">
+                                                            Dimensions
+                                                        </span>
+                                                        <span className="text-[11px] font-bold text-slate-800 leading-snug">
+                                                            {item["Dimensions"]}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            {/* Bottom Info */}
+                                            {/* 4. BOTTOM INFO (Plant & Cost) */}
                                             <div className="px-5 py-4 bg-slate-100 border-t-2 border-slate-200 flex justify-between items-center">
                                                 <div>
-                                                    <span className="text-[9px] font-black text-slate-500 uppercase block">Plant Ref</span>
-                                                    <span className="text-xs font-bold text-slate-900"># {item["Plant no"]}</span>
+                                                    <span className="text-[9px] font-black text-slate-500 uppercase block">
+                                                        Plant Ref
+                                                    </span>
+                                                    <span className="text-xs font-bold text-slate-900">
+                                                        # {item["Plant no"]}
+                                                    </span>
                                                 </div>
                                                 <div className="text-right">
-                                                    <span className="text-[9px] font-black text-slate-500 uppercase block">Unit Cost</span>
+                                                    <span className="text-[9px] font-black text-slate-500 uppercase block">
+                                                        Unit Cost
+                                                    </span>
                                                     <span className="text-xl font-black text-slate-900">
-                                                        ₹ {Number(item["Cost"]).toLocaleString()}
+                                                        ₹{" "}
+                                                        {Number(
+                                                            item["Cost"],
+                                                        ).toLocaleString()}
                                                     </span>
                                                 </div>
                                             </div>
@@ -254,10 +357,15 @@ function Home({ setUser }) {
                                     ))
                                 ) : (
                                     <div className="col-span-full py-32 flex flex-col items-center justify-center bg-slate-50 rounded-xl border-4 border-dashed border-slate-200">
-                                        <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tighter">No Matches Identified</h3>
-                                        <p className="text-slate-500 font-bold mt-2">The requested configuration does not exist in the Wilo inventory.</p>
-                                        <button 
-                                            onClick={() => setSelections({})} 
+                                        <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tighter">
+                                            No Matches Identified
+                                        </h3>
+                                        <p className="text-slate-500 font-bold mt-2">
+                                            The requested configuration does not
+                                            exist in the Wilo inventory.
+                                        </p>
+                                        <button
+                                            onClick={() => setSelections({})}
                                             className="mt-8 px-10 py-3 bg-green-600 text-white rounded font-black text-sm hover:bg-green-700 transition-all shadow-xl uppercase tracking-widest"
                                         >
                                             Reset Filter Stack
