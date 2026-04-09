@@ -74,6 +74,14 @@ function Home({ setUser }) {
     return Object.entries(selections).every(([key, value]) => row[key] === value);
   });
 
+  const handleLogout = () => {
+        localStorage.clear();
+        if (setUser) {
+            setUser(null);
+        }
+        localStorage.clear();
+        navigate("/", { replace: true });
+    };
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       {/* RESPONSIVE NAVBAR */}
@@ -101,7 +109,7 @@ function Home({ setUser }) {
               {cart.length}
             </span>
           </button>
-          <button onClick={() => { localStorage.clear(); navigate("/"); }} className="text-slate-500 hover:text-red-600 font-medium text-xs md:text-sm px-2">
+          <button onClick={handleLogout} className="text-slate-500 hover:text-red-600 font-medium text-xs md:text-sm px-2">
             Logout
           </button>
         </div>

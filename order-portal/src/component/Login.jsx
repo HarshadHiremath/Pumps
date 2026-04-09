@@ -75,7 +75,7 @@ function Login({ setUser }) {
               <img src={Logo} alt="Wilo Logo" className="w-16 h-auto grayscale-0" />
             </div>
             <h1 className="text-2xl font-black text-slate-900 tracking-tighter uppercase leading-none">
-              Aditya <span className="text-green-600">Pump's</span>
+              Industrial <span className="text-green-600">Pump's</span>
             </h1>
             <p className="text-[10px] mt-2 uppercase tracking-[0.1em] text-slate-500 font-black">
               Secure Asset Authorization
