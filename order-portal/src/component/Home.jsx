@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Img from "../assets/img.png";
+import Img from "../assets/Logo.jpg";
 
 function Home({ setUser }) {
   const navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Logo from "../assets/logo.jpeg";
+import Logo from "../assets/logo.jpg";
 
 const SHEET_ID = "1k_1BWpZz3ap10C8hdoMSGfEoVlYZ-12_QmAKURzcEWg";
 const API_KEY = "AIzaSyDFA-SjdIRv0U7BClx-85-JhK2CKSYH2as";
