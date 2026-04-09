@@ -4,13 +4,13 @@ import Img from "../assets/img.png";
 
 function Home({ setUser }) {
   const navigate = useNavigate();
-  const columns = ["Components", "Component Subtypes", "Size", "Features"];
+  const columns = ["SrNo","Components", "Component Subtypes", "Size", "Features"];
 
   const [rawData, setRawData] = useState([]);
   const [selections, setSelections] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
 
-  // Initialize cart from localStorage immediately to prevent sync issues
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem("cart");
     return saved ? JSON.parse(saved) : [];
@@ -18,42 +18,39 @@ function Home({ setUser }) {
 
   const API_URL = "https://sheets.googleapis.com/v4/spreadsheets/1rF0O4v9KPAOjC_DnvD8D2RDjKL-SslzfW4LV7ixWmFc/values/Data?key=AIzaSyDFA-SjdIRv0U7BClx-85-JhK2CKSYH2as";
 
-  // Sync cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // Fetch data from Google Sheets
   useEffect(() => {
     fetch(API_URL)
       .then((res) => res.json())
       .then((res) => {
         if (res.values) {
           const headers = res.values[0];
-          const jsonData = res.values.slice(1).map((row) => {
+          const data = res.values.slice(1).map((row, index) => {
             let obj = {};
             headers.forEach((key, i) => {
               obj[key] = row[i] ? String(row[i]).trim() : "N/A";
             });
+            obj._id = obj["SrNO"] || index;
             return obj;
           });
-          setRawData(jsonData);
+          setRawData(data);
         }
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Fetch error:", err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, []);
 
   const addToCart = (item) => {
-    // Check if item already exists based on a unique identifier (Components name)
-    const exists = cart.some((c) => c["Components"] === item["Components"]);
-    if (!exists) {
-      setCart((prev) => [...prev, { ...item, quantity: 1 }]);
-    }
+    setCart((prev) => {
+      if (prev.some((c) => c._id === item._id)) return prev;
+      return [...prev, { ...item, quantity: 1 }];
+    });
   };
+
+  const isInCart = (item) => cart.some((c) => c._id === item._id);
 
   const handleDropdownChange = (columnName, value) => {
     setSelections((prev) => {
@@ -68,99 +65,134 @@ function Home({ setUser }) {
     const otherFilters = { ...selections };
     delete otherFilters[columnName];
     const availableRows = rawData.filter((row) => {
-      return Object.entries(otherFilters).every(
-        ([key, value]) => row[key] === value
-      );
+      return Object.entries(otherFilters).every(([key, value]) => row[key] === value);
     });
-    return [...new Set(availableRows.map((row) => row[columnName]))]
-      .filter((v) => v && v !== "N/A")
-      .sort();
+    return [...new Set(availableRows.map((row) => row[columnName]))].sort();
   };
 
   const finalResults = rawData.filter((row) => {
-    return Object.entries(selections).every(
-      ([key, value]) => row[key] === value
-    );
+    return Object.entries(selections).every(([key, value]) => row[key] === value);
   });
 
-  const handleLogout = () => {
-    localStorage.clear();
-    if (setUser) setUser(null);
-    navigate("/", { replace: true });
-  };
-
   return (
-    <div className="min-h-screen bg-white font-sans">
-      <nav className="flex justify-between items-center p-4 border-b sticky top-0 bg-white z-10">
-        <div className="flex items-center gap-3">
-          <img src={Img} alt="Logo" className="w-10" />
-          <h1 className="font-bold text-xl text-blue-900">Pump Portal</h1>
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+      {/* RESPONSIVE NAVBAR */}
+      <nav className="sticky top-0 z-[60] flex justify-between items-center px-4 md:px-8 py-3 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div className="flex gap-2 md:gap-3 items-center">
+          <button 
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className="lg:hidden p-2 hover:bg-slate-100 rounded-lg"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+          </button>
+          <img src={Img} className="w-8 h-8 object-contain" alt="Logo" />
+          <h1 className="font-bold text-lg md:text-xl tracking-tight hidden sm:block">
+            Pump<span className="text-indigo-600">Portal</span>
+          </h1>
         </div>
-        <div className="flex gap-4">
+
+        <div className="flex items-center gap-2 md:gap-4">
           <button
             onClick={() => navigate("/cart")}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full font-medium transition"
+            className="flex items-center gap-2 bg-slate-900 text-white px-4 md:px-5 py-2 rounded-full font-semibold text-xs md:text-sm transition hover:bg-slate-800 shadow-md"
           >
-            Cart ({cart.length})
+            <span>Cart</span>
+            <span className="bg-indigo-500 text-white px-2 py-0.5 rounded-full text-[10px]">
+              {cart.length}
+            </span>
           </button>
-          <button
-            onClick={handleLogout}
-            className="border border-red-500 text-red-500 hover:bg-red-50 px-5 py-2 rounded-full transition"
-          >
+          <button onClick={() => { localStorage.clear(); navigate("/"); }} className="text-slate-500 hover:text-red-600 font-medium text-xs md:text-sm px-2">
             Logout
           </button>
         </div>
       </nav>
 
-      <div className="flex">
-        <aside className="w-72 p-6 border-r h-[calc(100vh-73px)] sticky top-[73px] overflow-y-auto">
-          <h2 className="font-bold text-lg mb-6 text-gray-800">Filter Products</h2>
-          {columns.map((col) => (
-            <div key={col} className="mb-6">
-              <label className="block text-xs font-uppercase tracking-wider font-bold text-gray-500 mb-2 uppercase">
-                {col}
-              </label>
-              <select
-                value={selections[col] || ""}
-                onChange={(e) => handleDropdownChange(col, e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none transition"
-              >
-                <option value="">All {col}</option>
-                {getOptionsForColumn(col).map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
+      <div className="flex relative">
+        {/* SIDEBAR - Overlay on mobile, fixed on desktop */}
+        <aside className={`
+          fixed lg:sticky top-0 lg:top-[65px] left-0 z-50
+          w-72 h-full lg:h-[calc(100vh-65px)] 
+          bg-white border-r border-slate-200 transition-transform duration-300 ease-in-out
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+        `}>
+          <div className="p-6">
+            <div className="flex justify-between items-center lg:hidden mb-6">
+              <h2 className="font-bold">Filters</h2>
+              <button onClick={() => setIsSidebarOpen(false)} className="p-2 text-slate-400">✕</button>
             </div>
-          ))}
+            
+            <h2 className="hidden lg:block text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Search Filters</h2>
+            
+            <div className="space-y-5">
+              {columns.map((col) => (
+                <div key={col} className="flex flex-col gap-1.5">
+                  <label className="text-xs font-bold text-slate-700">{col}</label>
+                  <select
+                    className="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-indigo-500"
+                    value={selections[col] || ""}
+                    onChange={(e) => handleDropdownChange(col, e.target.value)}
+                  >
+                    <option value="">All</option>
+                    {getOptionsForColumn(col).map((opt) => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                </div>
+              ))}
+              <button 
+                onClick={() => setSelections({})}
+                className="w-full py-2.5 mt-4 text-xs font-semibold text-indigo-600 hover:bg-indigo-50 rounded-lg border border-indigo-100 transition"
+              >
+                Reset Filters
+              </button>
+            </div>
+          </div>
         </aside>
 
-        <main className="flex-1 p-8 bg-gray-50 min-h-screen">
+        {/* MOBILE SIDEBAR OVERLAY */}
+        {isSidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden transition-opacity"
+            onClick={() => setIsSidebarOpen(false)}
+          ></div>
+        )}
+
+        {/* MAIN PRODUCT GRID */}
+        <main className="flex-1 p-4 md:p-8">
+          <header className="mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800">Components</h2>
+            <p className="text-slate-500 text-xs md:text-sm">Found {finalResults.length} matching items</p>
+          </header>
+
           {loading ? (
-            <div className="flex justify-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="flex justify-center items-center h-64">
+              <div className="w-8 h-8 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {finalResults.map((item, i) => {
-                const alreadyInCart = cart.some(c => c["Components"] === item["Components"]);
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
+              {finalResults.map((item) => {
+                const added = isInCart(item);
                 return (
-                  <div key={i} className="bg-white border border-gray-200 p-6 rounded-xl shadow-sm hover:shadow-md transition">
-                    <h2 className="font-bold text-xl mb-3 text-gray-900">{item["Components"]}</h2>
-                    <div className="text-sm text-gray-600 space-y-2 mb-6">
-                      <p><b>Subtype:</b> {item["Component Subtypes"]}</p>
-                      <p><b>Size:</b> {item["Size"]}</p>
-                      <p><b>Features:</b> {item["Features"]}</p>
+                  <div key={item._id} className="bg-white border border-slate-200 p-5 rounded-2xl transition-all hover:shadow-lg">
+                    <div className="mb-4">
+                      <span className="text-[10px] font-bold text-indigo-600 uppercase">SR: {item["SrNo"]}</span>
+                      <h3 className="font-bold text-slate-800 text-base md:text-lg leading-tight">{item["Components"]}</h3>
                     </div>
+
+                    <div className="space-y-2 mb-5 text-xs md:text-sm">
+                      <div className="flex justify-between"><span className="text-slate-400">Subtype</span><span className="text-slate-700 font-medium">{item["Component Subtypes"]}</span></div>
+                      <div className="flex justify-between"><span className="text-slate-400">Size</span><span className="text-slate-700 font-medium">{item["Size"]}</span></div>
+                      <div className="flex justify-between items-start gap-4"><span className="text-slate-400">Features</span><span className="text-slate-700 font-medium text-right">{item["Features"]}</span></div>
+                    </div>
+
                     <button
-                      disabled={alreadyInCart}
+                      disabled={added}
                       onClick={() => addToCart(item)}
-                      className={`w-full py-3 rounded-lg font-bold transition ${
-                        alreadyInCart
-                          ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                          : "bg-green-600 hover:bg-green-700 text-white"
+                      className={`w-full py-3 rounded-xl font-bold text-xs transition-all ${
+                        added ? "bg-slate-100 text-slate-400 border" : "bg-indigo-600 text-white hover:bg-indigo-700"
                       }`}
                     >
-                      {alreadyInCart ? "Already Added" : "Add to Cart"}
+                      {added ? "✓ In Cart" : "Add to Cart"}
                     </button>
                   </div>
                 );
